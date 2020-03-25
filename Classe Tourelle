@@ -1,0 +1,31 @@
+public class Tourelle extends GameObjects {
+    public int Cout;
+    public int Frequence_Tir;
+    public int Portee_Tir;
+    public int Efficacite_projectile;
+    public int Niveau;
+    // direction : comment gerer la direction de tir?
+
+    public Tourelle(int x, int y, int Vitesse, int Cout, int Frequence, int Portee, int Efficacite, int Niveau){
+        super(x,y,Vitesse);
+        this.Cout = Cout;
+        this.Frequence_Tir = Frequence;
+        this.Portee_Tir = Portee;
+        this.Efficacite_projectile = Efficacite;
+        this.Niveau = Niveau;
+    }
+
+    public void Initialise_Freq(int Frequence_Tir, int Niveau){
+        this.Frequence_Tir = Frequence_Tir * Niveau;
+    }
+    public void Initialise_Portee(int Portee, int Niveau){
+        this.Portee_Tir = Portee * Niveau;
+    }
+    public void Initialise_Efficacite(int Efficacite, int Niveau){
+        this.Efficacite_projectile = Efficacite * Niveau;
+    }
+    public void Ameliorer_Tour()
+
+
+
+}
