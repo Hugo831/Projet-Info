@@ -1,0 +1,13 @@
+public class Joueur {
+    public int Money;
+    public int Score = 100;
+
+
+    public Joueur(int money, int score){
+        this.Money = money;
+        this.Score = score;
+    }
+
+
+
+}
