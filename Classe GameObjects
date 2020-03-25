@@ -1,0 +1,31 @@
+public class GameObjects {
+    public int x;
+    public int y;
+    public int Vitesse;
+
+    public GameObjects(int x, int y, int Vitesse){
+        this.x = x;
+        this.y = y;
+        this.Vitesse = Vitesse;
+
+    }
+
+    public int getX(){
+        return x;
+    }
+    public void setX(int newX){
+        this.x = newX;
+    }
+    public int getY(){
+        return y;
+    }
+    public void setY(int newY){
+        this.y = newY;
+    }
+    public int getVitesse(){
+        return Vitesse;
+    }
+    public void setVitesse(int newVitesse){
+        this.Vitesse = newVitesse;
+    }
+}
