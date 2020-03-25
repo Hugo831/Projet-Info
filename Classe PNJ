@@ -1,0 +1,27 @@
+public class PNJ extends GameObjects {
+
+    protected int Pts_Vie;
+    private int Wave;
+    public int Points;                      // points perdus si le PNJ arrive a la sortie
+    public Projectile projectile;
+
+    public PNJ(int x, int y, int Vitesse, int Pts_Vie, int Wave, int Points, Projectile projectile){
+        super(x,y,Vitesse);
+        this.Pts_Vie = Pts_Vie;
+        this.Wave = Wave;
+        this.Points = Points;
+        this.projectile = projectile;
+    }
+
+    public void Initial_Life(int Pts_Vie, int Wave){
+        this.Pts_Vie = Pts_Vie * Wave;                            //les points de vie dependent de la vague
+
+
+    }
+
+    public void Sortie(){
+
+    }
+
+
+}
