@@ -1,0 +1,17 @@
+public class Projectile extends GameObjects{
+    public int Degats;
+    public int Niveau;
+
+    public Projectile(int x, int y, int Vitesse, int Degats, int Niveau){
+        super(x,y,Vitesse);
+        this.Degats = Degats;
+        this.Niveau = Niveau;
+    }
+    public void Initialise_Degats(int Degats, int Niveau){
+        this.Degats = Degats * Niveau;
+    }
+
+
+
+
+}
