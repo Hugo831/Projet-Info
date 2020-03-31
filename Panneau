@@ -1,0 +1,88 @@
+package projet;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.imageio.ImageIO;
+
+
+public class Panneau extends JPanel {
+    //private ArrayList<GameObjects> gameObjects = new ArrayList<>();
+    private int posX = -5;
+    private int posY = 50;
+
+    public void paintComponent(Graphics graphics){
+        try {
+            graphics.setColor(Color.white);
+            graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
+            Image img = ImageIO.read(new File("C:\\Users\\jacqu\\Pictures\\sandgrains.jpg"));
+            graphics.drawImage(img,0,0, null, this);
+            Chemin chemin = new Chemin(graphics);
+            PNJ pnj = new PNJ(posX,posY,15,graphics,this);
+            Tourelle tour = new Tourelle(graphics,40);
+
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public int getPosX() {
+        return posX;
+    }
+
+    public void setPosX(int posX) {
+        this.posX = posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
+
+    public void setPosY(int posY) {
+        this.posY = posY;
+    }
+    public void deplacer_pnj(){
+        for(int i = 0; i < 275 ; i++){
+            int x = getPosX(), y = 50;
+            x++;
+            setPosX(x);
+            setPosY(y);
+            repaint();
+            try {
+                Thread.sleep(8);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        for(int i = 50 ; i <380 ; i++){
+            int x = 275 , y = getPosY();
+            y++;
+            setPosX(x);
+            setPosY(y);
+            repaint();
+            try {
+                Thread.sleep(8);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        for (int i = 300 ; i < 600 ; i++){
+            int x = getPosX(), y = 380;
+            x++;
+            setPosX(x);
+            setPosY(y);
+            repaint();
+            try {
+                Thread.sleep(8);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+}
+
+
