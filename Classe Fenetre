@@ -1,0 +1,37 @@
+package projet;
+
+import javax.swing.*;                                          // contient les JFrame et JPanel
+
+
+import java.awt.*;
+
+import static javax.swing.JFrame.*;
+
+public class Fenetre extends JFrame {
+
+    JFrame fenetre = new JFrame();                         // creation d'une fenetre
+    Panneau panneau = new Panneau();
+
+
+
+    public Fenetre() {
+        this.setSize(600, 600);                   // 800 pixels de haut et de large
+        this.setLocationRelativeTo(null);                      // pour que la fenetre s'ouvre au centre
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   // arrete le programme qd on ferme la fenetre
+        this.setVisible(true);                                 // rend la fenetre visible
+        this.setResizable(false);                              // empeche de modifier les dimensions de la fenetre
+        this.setTitle("Tower Defense Map");
+        this.setAlwaysOnTop(true);                             // garde la fenetre au premier plan tjr
+        this.setContentPane(panneau);                          // on previent la fenetre que son Jpanel est panel
+        modif_fenetre();
+
+    }
+    private void modif_fenetre(){
+        panneau.deplacer_pnj();
+
+    }
+
+
+}
+
+
