@@ -1,0 +1,13 @@
+package projet;
+import javax.swing.*;
+import java.awt.*;
+public class Chemin {
+    public Chemin(Graphics graphics){
+        graphics.setColor(Color.WHITE);
+        graphics.fillRect(0,40,300,30);         // on peut mettre les valeurs en attributs et les instancier dans le main
+        graphics.fillRect(270,70,30,330);
+        graphics.fillRect(300,370,300,30);
+    }
+
+
+}
