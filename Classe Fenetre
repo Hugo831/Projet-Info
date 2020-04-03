@@ -11,7 +11,7 @@ public class Fenetre extends JFrame {
 
     JFrame fenetre = new JFrame();                         // creation d'une fenetre
     Panneau panneau = new Panneau();
-
+    Bouton bouton = new Bouton("Start");
 
 
     public Fenetre() {
@@ -23,7 +23,10 @@ public class Fenetre extends JFrame {
         this.setTitle("Tower Defense Map");
         this.setAlwaysOnTop(true);                             // garde la fenetre au premier plan tjr
         this.setContentPane(panneau);                          // on previent la fenetre que son Jpanel est panel
+        panneau.setLayout(new BorderLayout());
+        panneau.add(bouton,BorderLayout.SOUTH);
         modif_fenetre();
+        
 
     }
     private void modif_fenetre(){
