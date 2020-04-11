@@ -1,21 +1,21 @@
 package projet;
 
 import javax.swing.*;                                          // contient les JFrame et JPanel
-
-
 import java.awt.*;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import static javax.swing.JFrame.*;
 
 public class Fenetre extends JFrame {
+    Panneau panneau = new Panneau(650,550, this);
+    private int Width;
+    private int Height;
 
-    JFrame fenetre = new JFrame();                         // creation d'une fenetre
-    Panneau panneau = new Panneau();
-    Bouton bouton = new Bouton("Start");
-
-
-    public Fenetre() {
-        this.setSize(600, 600);                   // 800 pixels de haut et de large
+    public Fenetre(int width, int height) {
+        this.Width = width;
+        this.Height = height;
+        this.setSize(width, height);                           // 800 pixels de haut et de large
         this.setLocationRelativeTo(null);                      // pour que la fenetre s'ouvre au centre
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   // arrete le programme qd on ferme la fenetre
         this.setVisible(true);                                 // rend la fenetre visible
@@ -23,17 +23,15 @@ public class Fenetre extends JFrame {
         this.setTitle("Tower Defense Map");
         this.setAlwaysOnTop(true);                             // garde la fenetre au premier plan tjr
         this.setContentPane(panneau);                          // on previent la fenetre que son Jpanel est panel
-        panneau.setLayout(new BorderLayout());
-        panneau.add(bouton,BorderLayout.SOUTH);
-        modif_fenetre();
-        
-
+        this.setLayout(new GridLayout(1,1,0,0));   // pour former un quadrillage
+        panneau.run();
     }
-    private void modif_fenetre(){
-        panneau.deplacer_pnj();
-
+    public int getWidth(){
+        return Width;
     }
-
+    public int getHeight(){
+        return Height;
+    }
 
 }
 
