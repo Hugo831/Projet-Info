@@ -1,43 +1,33 @@
 package projet;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-public class Bouton extends JButton implements MouseListener {
-    private String string;
+public class Bouton extends JButton {
     private Panneau panneau;
-    public boolean clic = false;                        // on pose qu'il n'y a pas de clic sur le bouton
-
-    public Bouton(String string){
+    private String string;
+    private Fenetre fenetre;
+    public Bouton(String string, int width, int height, int x, int y, Panneau panneau, Fenetre fenetre){
         super(string);
         this.string = string;
-        this.addMouseListener(this);
+        setBounds(x,y,width, height);
+        this.panneau = panneau;
+        this.fenetre = fenetre;
     }
-    public void paintComponent(Graphics g){
-        g.setColor(Color.cyan);
-        g.fillRect(0,0, this.getWidth(), this.getHeight());
-        g.setColor(Color.black);
-        g.drawString(this.string, this.getWidth() / 2 - (this.getWidth() /  2 /4), (this.getHeight() / 2) + 5);
+    public void draw(Graphics graphics){
+        graphics.setColor(Color.GRAY);
+        graphics.fillRect(getX(),getY(),getWidth(),getHeight());
+        graphics.setColor(Color.BLACK);
+        graphics.setFont(new Font("Courier New", Font.BOLD, 20));
+        graphics.drawString(string,getX()+30, getY()+30);             //pour faire apparaitre le texte plus ou moins au milieu
+        if (contient(panneau.getSouris().x, panneau.getSouris().y)){
+            graphics.setColor(Color.LIGHT_GRAY);
+            graphics.fillRect(getX(),getY(),getWidth(),getHeight());
+            graphics.setColor(Color.BLACK);
+            graphics.setFont(new Font("Courier New", Font.BOLD, 20));
+            graphics.drawString(string,getX()+30, getY()+30);
+        }
     }
-
-    public void mouseClicked(MouseEvent event) {
-
-    }
-
-    public void mouseEntered(MouseEvent event) {
-
-    }
-
-    public void mouseExited(MouseEvent event) {
-
-    }
-
-    public void mousePressed(MouseEvent event) {
-
-    }
-
-    public void mouseReleased(MouseEvent event) {
-
+    public boolean contient(int x, int y){
+        return x >= getX() && x < getX() + getWidth() && y >= getY() && y < getY() + getHeight();
     }
 }
