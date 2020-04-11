@@ -1,27 +1,57 @@
-public class PNJ extends GameObjects {
+package projet;
+import javax.swing.*;
+import java.awt.*;
 
-    protected int Pts_Vie;
+
+public class PNJ extends Carre implements Drawable {
+
+    private int Pts_Vie;
     private int Wave;
-    public int Points;                      // points perdus si le PNJ arrive a la sortie
-    public Projectile projectile;
+    private int Points;                      // points perdus si le PNJ arrive a la sortie
+    private Plateau_Jeu plateau;
+    private boolean inGame = false;
 
-    public PNJ(int x, int y, int Vitesse, int Pts_Vie, int Wave, int Points, Projectile projectile){
-        super(x,y,Vitesse);
-        this.Pts_Vie = Pts_Vie;
-        this.Wave = Wave;
-        this.Points = Points;
-        this.projectile = projectile;
+    public PNJ(int x, int y, int cote, int pts_Vie, int wave, int points, Plateau_Jeu plateau){
+        super(x,y,cote);
+        this.Pts_Vie = pts_Vie;
+        this.Wave = wave;
+        this.Points = points;
+        this.plateau = plateau;
+
+
+
     }
 
     public void Initial_Life(int Pts_Vie, int Wave){
         this.Pts_Vie = Pts_Vie * Wave;                            //les points de vie dependent de la vague
+    }
+
+    public void draw(Graphics graphics) {
+        if (inGame){
+            graphics.setColor(Color.BLUE);
+            graphics.fillRect(getX(), getY(), getCote(), getCote());
+        }
+
+    }
+    public void depart_pnj(){
+        if (!inGame){
+            int [] pos= plateau.getFirstPos();
+            setX(pos[0]);
+            setY(pos[1]);
+
+        }
+        inGame = true;
 
 
     }
-
-    public void Sortie(){
-
+    public boolean getInGame(){
+        return inGame;
     }
+    private int i = 0;
+    public void se_deplacer(){
+        i += 1;
+        setX(i);
+        }
 
 
 }
