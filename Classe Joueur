@@ -1,11 +1,25 @@
-public class Joueur {
-    public int Money;
-    public int Score = 100;
+package projet;
+
+import java.awt.*;
+
+public class Joueur implements Drawable{
+    private int Money;
+    private int Score = 100;
 
 
     public Joueur(int money, int score){
         this.Money = money;
         this.Score = score;
+    }
+
+    public void draw(Graphics graphics){
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.fillRect(50, 475, 150,80);
+        graphics.setColor(Color.BLACK);
+        graphics.setFont(new Font("Courier New", Font.BOLD, 14));
+        graphics.drawString("Score Joueur: "+Score, 60, 500);
+        graphics.drawString("Argent Joueur: "+ Money, 60, 540);
+
     }
 
 
