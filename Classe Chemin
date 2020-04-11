@@ -1,13 +1,19 @@
 package projet;
-import javax.swing.*;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
-public class Chemin {
-    public Chemin(Graphics graphics){
-        graphics.setColor(Color.WHITE);
-        graphics.fillRect(0,40,300,30);         // on peut mettre les valeurs en attributs et les instancier dans le main
-        graphics.fillRect(270,70,30,330);
-        graphics.fillRect(300,370,300,30);
+
+public class Chemin extends Carre implements Drawable {
+
+    public Chemin(int x , int y, int cote){
+        super(x,y,cote);
+
     }
+    public void draw(Graphics graphics){
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.fillRect(getX(),getY(),getCote(),getCote());
+    }
+
 
 
 }
