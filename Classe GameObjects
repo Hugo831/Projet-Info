@@ -1,31 +1,33 @@
+package projet;
+
+import java.awt.*;
+
 public class GameObjects {
-    public int x;
-    public int y;
-    public int Vitesse;
+    protected int posX;
+    protected int posY;
+    protected Graphics graphics;
+    protected Panneau panneau;
 
-    public GameObjects(int x, int y, int Vitesse){
-        this.x = x;
-        this.y = y;
-        this.Vitesse = Vitesse;
+
+    public GameObjects(int posX, int posY, Graphics graphics, Panneau panneau){
+        this.posX = posX;
+        this.posY = posY;
+        this.graphics = graphics;
+        this.panneau = panneau;
 
     }
 
-    public int getX(){
-        return x;
+    public int getPosX(){
+        return posX;
     }
-    public void setX(int newX){
-        this.x = newX;
+    public void setPosX(int newX){
+        this.posX = newX;
     }
-    public int getY(){
-        return y;
+    public int getPosY(){
+        return posY;
     }
-    public void setY(int newY){
-        this.y = newY;
+    public void setPosY(int newY){
+        this.posY = newY;
     }
-    public int getVitesse(){
-        return Vitesse;
-    }
-    public void setVitesse(int newVitesse){
-        this.Vitesse = newVitesse;
-    }
+
 }
