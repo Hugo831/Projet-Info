@@ -1,0 +1,18 @@
+package projet;
+
+import java.awt.*;
+
+public class Sable extends Carre implements Drawable{
+
+    public Sable(int x, int y, int cote, int airID, int groundID){
+        super(x,y,cote, airID, groundID);
+
+
+    }
+    public void draw(Graphics graphics){
+        graphics.setColor(Color.YELLOW);
+        graphics.fillRect(getX(),getY(),getCote(),getCote());
+
+    }
+
+}
