@@ -1,0 +1,45 @@
+package projet;
+
+import java.awt.*;
+import java.util.ArrayList;
+
+public class Vague {
+    private int vitessePnj;
+    private int nombrePnj;
+    private int tempsApparition;
+    private int viePnj;
+    private int y,x;
+    private int compteurapp = 0;
+    private ArrayList<PNJ> pnjList;
+    private Plateau_Jeu plateau;
+    public Vague(int x, int y, int vitesse, int nombre, int tempsApp, int vie, Plateau_Jeu plateau){
+        pnjList = new ArrayList<>();
+        this.x  =x;
+        this.y = y;
+        this.vitessePnj  =vitesse;
+        this.nombrePnj = nombre;
+        this.tempsApparition = tempsApp;
+        this.viePnj = vie;
+        this.plateau = plateau;
+    }
+
+    public void update(Graphics graphics){
+        if (pnjList.size()<=nombrePnj-1 && compteurapp >= tempsApparition){
+            pnjList.add(new PNJ(x,y,50,viePnj, plateau, -2, 2));
+            compteurapp = 0;
+        }
+        else{
+            compteurapp += 1;
+        }
+        for (int i=0; i<pnjList.size();++i){
+            pnjList.get(i).se_deplacer();
+            pnjList.get(i).draw(graphics);
+        }
+
+    }
+    public int getVitessePnj(){
+
+        return vitessePnj;
+    }
+
+}
