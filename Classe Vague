@@ -34,12 +34,17 @@ public class Vague {
         for (int i=0; i<pnjList.size();++i){
             pnjList.get(i).se_deplacer();
             pnjList.get(i).draw(graphics);
+            pnjList.get(i).delete();
+            pnjList.get(i).looseScore();
+
         }
+
 
     }
     public int getVitessePnj(){
 
         return vitessePnj;
     }
+
 
 }
