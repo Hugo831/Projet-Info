@@ -1,0 +1,20 @@
+package projet;
+
+import java.awt.*;
+
+public class Arrivee extends Carre implements Drawable{
+
+        public Arrivee(int x, int y, int cote, int airID, int groundID){
+            super(x,y,cote, airID, groundID);
+
+        }
+        public void draw(Graphics graphics){
+            graphics.setColor(Color.GRAY);
+            graphics.fillRect(getX(),getY(),getCote(),getCote());
+            graphics.setColor(Color.BLACK);
+            graphics.setFont(new Font("Courier New", Font.BOLD, 14));
+            graphics.drawString("Finish ", getX()-20, getY()+30);
+        }
+
+    }
+
