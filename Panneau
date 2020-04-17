@@ -2,34 +2,53 @@ package projet;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 
 public class Panneau extends JPanel implements Runnable {               // runnable est une interface qui permet de faire une boucle infinie
     private Plateau_Jeu plateau;
     private Souris souris;
     private int Width;
     private int Height;
-    private Bouton bouton;
+    private Bouton[] boutons = new Bouton[5];
+    private Tourelle[] tours = new Tourelle[5];
+    private int buttonwidth = 60;
+    private int buttonHeight = 50;
     private Joueur joueur;
+    private Vague vague;
+    private Tourelle tourelle;
 
     public Panneau(int width, int height, Fenetre fenetre){
-        souris = new Souris(this, fenetre);
+        souris = new Souris(this, fenetre, tourelle);
         this.Width = width;
         this.Height = height;
-        fenetre.addMouseListener(souris);                 // le parametre est le composant que l'on doit ecouter et Souris a le comportement de Mouse Listener et MouseMotionListener
-        fenetre.addMouseMotionListener(souris);
+        addMouseListener(souris);                 // le parametre est le composant que l'on doit ecouter et Souris a le comportement de Mouse Listener et MouseMotionListener
+        addMouseMotionListener(souris);
         plateau = new Plateau_Jeu();
-        bouton = new Bouton("Start", 120,50,275,this.getHeight() - 50, this, fenetre);
-        joueur = new Joueur(0,100);
-
-
+        //bouton = new Bouton("Start", 120,50,275,this.getHeight() - 50, this, fenetre);
+        joueur = new Joueur(10,100);
+        for (int i = 0 ; i < boutons.length ; i++){
+            boutons[i] = new Bouton("ok", 60, 60, this.getWidth() - 400 + i*(buttonwidth+5), this.getHeight()-50, this, fenetre);
+            tours[i] = new Tourelle(this.getWidth() - 400 + i*(buttonwidth+5), this.getHeight()-50, 50, -1, 0, this, fenetre);
+        }
     }
 
+    public Tourelle[] getTours(){
+        return tours;
+    }
+    public Tourelle getTourelle(int x){
+        return tours[x/tours[0].getCote()];
+    }
     public void paintComponent(Graphics graphics) {
         graphics.clearRect(0,0, getWidth(),getHeight());
         plateau.affichage_grille(graphics);
-        bouton.draw(graphics);
+        plateau.affichage_arrivee(graphics);
+        for (int i = 0 ; i < boutons.length ; i++) {
+            boutons[i].draw(graphics);
+            tours[i].draw(graphics);
+        }
         joueur.draw(graphics);
-        plateau.affichage_pnj(graphics);
+        plateau.updateVague(graphics);
+
 
     }
 
@@ -37,7 +56,7 @@ public class Panneau extends JPanel implements Runnable {               // runna
         while (true){
             repaint();
             try{
-                Thread.sleep(5);
+                Thread.sleep(2);
             }
             catch(Exception e){
 
