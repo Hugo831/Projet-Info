@@ -9,17 +9,21 @@ public class PNJ extends Carre implements Drawable {
     private int Wave;
     private int Points;                      // points perdus si le PNJ arrive a la sortie
     private Plateau_Jeu plateau;
-    private boolean inGame = false;
+    private boolean inGame = true;
+    private int upward = 0, downward = 1, right = 2, left = 3;
+    private int direction = right;                   //direction par defaut vers la droite
+    private int deplacement = 0;
+    private Carre chemin;
+    private boolean hasUpward = false;
+    private boolean hasDownward = false;
+    private boolean hasRight = false;
+    private boolean hasLeft = false;
 
-    public PNJ(int x, int y, int cote, int pts_Vie, int wave, int points, Plateau_Jeu plateau){
-        super(x,y,cote);
+    public PNJ(int x, int y, int cote, int pts_Vie, Plateau_Jeu plateau, int airID, int groundID){
+        super(x, y, cote, airID, groundID);
         this.Pts_Vie = pts_Vie;
-        this.Wave = wave;
-        this.Points = points;
         this.plateau = plateau;
-
-
-
+        depart_pnj();
     }
 
     public void Initial_Life(int Pts_Vie, int Wave){
@@ -27,31 +31,120 @@ public class PNJ extends Carre implements Drawable {
     }
 
     public void draw(Graphics graphics) {
-        if (inGame){
+        if (inGame) {
             graphics.setColor(Color.BLUE);
             graphics.fillRect(getX(), getY(), getCote(), getCote());
+            graphics.setColor(Color.BLACK);
+            graphics.drawRect(getX(),getY(),getCote(),getCote());
         }
 
     }
     public void depart_pnj(){
         if (!inGame){
             int [] pos= plateau.getFirstPos();
-            setX(pos[0]);
-            setY(pos[1]);
+            int xC = pos[0];                        // position du premier carre du chemin
+            int yC = pos[1];
+            setX(xC);
+            setY(yC);
+            this.inGame = true;
 
         }
-        inGame = true;
 
 
     }
     public boolean getInGame(){
         return inGame;
     }
-    private int i = 0;
-    public void se_deplacer(){
-        i += 1;
-        setX(i);
+
+    private int compteur = 0;
+    private int vitesse_controle = 2;
+    public void se_deplacer() {
+        if (compteur >= vitesse_controle){
+            if (direction == right){
+                int x = this.getX() + 1;
+                setX(x);
+            }
+            else if (direction == upward){
+                int y = this.getY() - 1;
+                setY(y);
+            }
+            else if (direction == downward){
+                int y = this.getY() + 1;
+                setY(y);
+            }
+            else if (direction == left){
+                int x = this.getX() - 1;
+                setX(x);
+            }
+            deplacement += 1;
+            if (deplacement == plateau.getCote_carre()){            // modifier les coordonnees des carres occupe par le pnj
+                if (direction == right){
+                    hasRight = true;
+                }
+                else if (direction == upward){
+                    hasUpward = true;
+                }
+                else if (direction == downward){
+                    hasDownward = true;
+                }
+                else if (direction == left){
+                    hasLeft = true;
+                }
+                if (!hasUpward) {
+                    try {
+                        if (plateau.getCarre(getX(), getY() + plateau.getCote_carre()) instanceof Chemin) {
+                            direction = downward;
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+                if (!hasDownward) {
+                    try {
+                        if (plateau.getCarre(getX(), getY() - plateau.getCote_carre()) instanceof Chemin) {
+                            direction = upward;
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+                if (!hasLeft) {
+                    try {
+                        if (plateau.getCarre(getX() + plateau.getCote_carre(), getY()) instanceof Chemin) {
+                            direction = right;
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+                if (!hasRight) {
+                    try {
+                        if (plateau.getCarre(getX() - plateau.getCote_carre(), getY()) instanceof Chemin) {
+                            direction = left;
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+                hasLeft = false;
+                hasDownward = false;
+                hasUpward = false;
+                hasRight = false;
+                deplacement = 0;
+            }
+
+            compteur = 0;
+        }
+        else{
+            compteur += 1;
         }
 
+    }
+    public void delete(){
+        if (getX() == plateau.getWidth())
+            inGame = false;
+
+    }
+    public void looseScore(){
+        if (getX() == plateau.getWidth()) {
+            Joueur.Score -= 1;
+        }
+    }
 
 }
