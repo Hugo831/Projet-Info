@@ -1,18 +1,44 @@
-public class Tourelle extends GameObjects {
+package projet;
+
+import projet.GameObjects;
+
+import java.awt.*;
+
+public class Tourelle extends Carre implements Drawable{
     public int Cout;
     public int Frequence_Tir;
     public int Portee_Tir;
     public int Efficacite_projectile;
     public int Niveau;
-    // direction : comment gerer la direction de tir?
+    public int dimensions;
+    public boolean clicTour = false;
+    private Panneau panneau;
+    private Fenetre fenetre;
 
-    public Tourelle(int x, int y, int Vitesse, int Cout, int Frequence, int Portee, int Efficacite, int Niveau){
-        super(x,y,Vitesse);
-        this.Cout = Cout;
+    public Tourelle(int x, int y, int cote, int airID, int groundID, Panneau panneau, Fenetre fenetre){
+        super(x, y, cote, airID, groundID);
+        this.panneau = panneau;
+        this.fenetre = fenetre;
+
+        /*this.Cout = Cout;
         this.Frequence_Tir = Frequence;
-        this.Portee_Tir = Portee;
         this.Efficacite_projectile = Efficacite;
-        this.Niveau = Niveau;
+        this.Niveau = Niveau;*/
+
+
+    }
+    public void draw(Graphics graphics) {
+        graphics.setColor(Color.BLACK);
+        graphics.fillRect(getX()+10, getY()+15, getCote()-10, getCote()-20);
+        for (int i = 0 ; i < 2 ; i++){
+            graphics.fillRect(getX()+10, getY()+5, getCote()-40, getCote()-40);
+            graphics.fillRect(getX()+25, getY()+5, getCote()-40, getCote()-40);
+            graphics.fillRect(getX()+40, getY()+5, getCote()-40, getCote()-40);
+        }
+        if (clicTour){
+            graphics.fillRect(panneau.getSouris().x - getCote(), panneau.getSouris().y, getCote(), getCote());
+        }
+
     }
 
     public void Initialise_Freq(int Frequence_Tir, int Niveau){
@@ -24,7 +50,19 @@ public class Tourelle extends GameObjects {
     public void Initialise_Efficacite(int Efficacite, int Niveau){
         this.Efficacite_projectile = Efficacite * Niveau;
     }
-    public void Ameliorer_Tour()
+    public void Ameliorer_Tour(){}
+    /*public void click(int mouseButton, Panneau panneau, Souris souris){
+        if (mouseButton == 1){
+            for (int i = 0 ; i < panneau.getTour().length ; i++){
+                if ()
+            }
+        }
+    }*/
+    public boolean contient(int x, int y){
+        return x >= getX() && x < getX() + getCote() && y >= getY() && y < getY() + getCote();
+    }
+
+
 
 
 
