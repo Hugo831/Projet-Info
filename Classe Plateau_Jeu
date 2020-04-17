@@ -1,6 +1,9 @@
 package projet;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
 public class Plateau_Jeu {                           //on va creer le plateau de jeu puis l'ajouter au panneau
     private int nbCarreX = 12;                       // nombre de carres horizontaux sur le plateau de jeu
@@ -9,95 +12,127 @@ public class Plateau_Jeu {                           //on va creer le plateau de
     private Graphics graphics;
     private Chemin chemin;
     private PNJ pnj;
-    private Carre [][] tableau;                       // creation d'un plateau double entree pour creer la grille, liste de carres
-    private PNJ [] vague_pnj = new PNJ[50];
-    public Plateau_Jeu(){
-        this.pnj = pnj;
-        tableau = new Carre[nbCarreY][nbCarreX];      // on cree le tableau vide avec le bon nbre de cases
-        creation_grille();
-        creation_vague_pnj(1);
+    private Carre[][] tableau;                       // creation d'un plateau double entree pour creer la grille, liste de carres
+    private ArrayList<PNJ> vague_pnj;
+    private Vague currentWave = null;
 
+    public Plateau_Jeu() {
+        tableau = new Carre[nbCarreY][nbCarreX];      // on cree le tableau vide avec le bon nbre de cases
+        creation_grille(new File("C:\\Users\\jacqu\\Documents\\BA2\\Informatique\\MAP1ground.txt"));
+        creation_arrivee(new File("C:\\Users\\jacqu\\Documents\\BA2\\Informatique\\MAP1air.txt"));
+        creation_vague_pnj();
+        vague_pnj = new ArrayList<>();
     }
 
-    public void creation_grille(){
-        for (int y = 0 ; y < tableau.length ; y++){           //length d'un tableau renvoie sa hauteur
-            for (int x = 0 ; x < tableau[0].length ; x++){
-                tableau[y][x] = new Sable(x*cote_carre+40, y*cote_carre+20, cote_carre);                  // dans chaque case du tableau on cree un nouveau carre
-        for (int x1 = 0; x1 < 2 ; x1++){
-            tableau[1][x1] = new Chemin(x1*cote_carre+40, 1*cote_carre+20,cote_carre);                    // creation des blocs chemin
+    public void creation_grille(File Map) {
+        for (int y = 0; y < tableau.length; y++) {           //length d'un tableau renvoie sa hauteur
+            for (int x = 0; x < tableau[0].length; x++) {
+                tableau[y][x] = new Sable(x * cote_carre + 40, y * cote_carre + 20, cote_carre, -2, 0);                  // dans chaque case du tableau on cree un nouveau carre
+            }
         }
-        for (int y2 = 1 ; y2 < 6 ; y2++){
-            tableau[y2][1] = new Chemin(1*cote_carre+40, y2*cote_carre+20,cote_carre);
-        }
-        for (int x3 = 1 ; x3 < 7 ; x3++){
-            tableau[6][x3] = new Chemin(x3*cote_carre+40, 6*cote_carre+20,cote_carre);
-        }
-        for (int y4 = 6 ; y4 > 3 ; y4--){
-            tableau[y4][6] = new Chemin(6*cote_carre+40, y4*cote_carre+20,cote_carre);
-        }
-        for (int x5 = 6 ; x5 < tableau[0].length ; x5++){
-            tableau[4][x5] = new Chemin(x5*cote_carre+40, 4*cote_carre+20,cote_carre);
-        }
+        try {
+            Scanner scanner = new Scanner(Map);
+            while (scanner.hasNext()) {
+                for (int j = 0; j < tableau.length; j++) {           //length d'un tableau renvoie sa hauteur
+                    for (int i = 0; i < tableau[0].length; i++) {
+                        if (scanner.nextInt() == 1) {
+                            tableau[j][i] = new Chemin(i * cote_carre+40, j * cote_carre+20, cote_carre, -2, 1);
+                        }
+                    }
+                }
 
             }
-
         }
+        catch(Exception e){}
+    }
+    public void creation_arrivee(File Map){
+        try {
+            Scanner scanner = new Scanner(Map);
+            while (scanner.hasNext()){
+                for (int j = 0; j < tableau.length; j++) {           //length d'un tableau renvoie sa hauteur
+                    for (int i = 0; i < tableau[0].length; i++) {
+                        if (scanner.nextInt() == 0) {
+                            tableau[j][i] = new Arrivee(i * cote_carre+40, j * cote_carre+20, cote_carre, 0, 1);
+                        }
+                    }
+                }
+            }
+
+        }catch(Exception e){}
 
     }
-
-    public void affichage_grille(Graphics graphics) {
+    public void affichage_arrivee(Graphics graphics){
         for (int y = 0; y < tableau.length; y++) {
             for (int x = 0; x < tableau[0].length; x++) {
-                if (tableau[y][x] instanceof Sable){
-                    ((Sable)tableau[y][x]).draw(graphics);              //on parcourt tous les carres et en fonction de leur classe on leur applique la methode draw
-                }
-                if (tableau[y][x] instanceof Chemin){
-                    ((Chemin)tableau[y][x]).draw(graphics);
+                if (tableau[y][x] instanceof Arrivee) {
+                    ((Arrivee) tableau[y][x]).draw(graphics);
                 }
             }
         }
     }
-    public void creation_vague_pnj(int wave){
-        for (int i = 0 ; i < vague_pnj.length ; i++){
-            vague_pnj[i] = new PNJ(0,0,30,10,wave,5, this);
-            vague_pnj[i].depart_pnj();
-        }
-    }
-    private int temps_apparition = 500;
-    private int compteur = 0;
-    public void affichage_pnj(Graphics graphics){
-        if (compteur >= temps_apparition){
-            for (int i = 0 ; i < vague_pnj.length ; i++){
-                if (vague_pnj[i].getInGame()){
-                    vague_pnj[i].se_deplacer();
-                    vague_pnj[i].draw(graphics);
-                    break;
+
+    public void affichage_grille (Graphics graphics){
+        for (int y = 0; y < tableau.length; y++) {
+            for (int x = 0; x < tableau[0].length; x++) {
+                if (tableau[y][x] instanceof Sable) {
+                    ((Sable) tableau[y][x]).draw(graphics);
                 }
-            compteur = 0;
+                if (tableau[y][x] instanceof Chemin) {
+                    ((Chemin) tableau[y][x]).draw(graphics);
+                }
+
             }
         }
-        else{
-            compteur += 1;
+    }
+
+
+    public void creation_vague_pnj() {
+        int[] pos = getFirstPos();
+        currentWave = new Vague(pos[0], pos[1], 40, 10, 190, 5, this);
+    }
+
+    public void updateVague (Graphics graphics){
+        if (currentWave != null) {
+            currentWave.update(graphics);
         }
     }
-    public int getLength(){
+
+    public int getLength () {
         return tableau.length;
     }
-    public int[] getFirstPos(){
+
+    public int[] getFirstPos () {
         int res[] = new int[2];
-        for (int y = 0 ; y < tableau.length ; y++){
-            if (tableau[y][0] instanceof Chemin){                   // pour qu'il trouve l'entree du chemin
-                res[0] = tableau[y][0].getX()-10;
-                res[1] = tableau[y][0].getY()+10;
+        for (int y = 0; y < tableau.length; y++) {
+            if (tableau[y][0] instanceof Chemin) {                   // pour qu'il trouve l'entree du chemin
+                res[0] = tableau[y][0].getX();                       //-10
+                res[1] = tableau[y][0].getY();                       //+10 si pnj de 30
             }
         }
         return res;
     }
-    public void deplacement_vague(){
-        for(int i = 0 ; i < vague_pnj.length ; i++){
-            if (vague_pnj[i].getInGame()){
-                vague_pnj[i].se_deplacer();
-            }
-        }
+    public int getCote_carre(){
+        return cote_carre;
     }
+    public boolean isChemin(Carre carre) {
+        boolean res = false;
+        if (carre instanceof Chemin) {
+            res =true;
+        }
+        System.out.println(res);
+        return res;
+    }
+    public Carre getCarre(int x, int y) {
+        return tableau[y/cote_carre][x/cote_carre];
+    }
+    public int getNbCarreX(){
+        return nbCarreX;
+    }
+    public int getWidth(){
+        return nbCarreX * cote_carre;
+    }
+    public int getHeight(){
+        return nbCarreY * cote_carre;
+    }
+
 }
