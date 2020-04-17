@@ -18,16 +18,17 @@ public class Bouton extends JButton {
         graphics.fillRect(getX(),getY(),getWidth(),getHeight());
         graphics.setColor(Color.BLACK);
         graphics.setFont(new Font("Courier New", Font.BOLD, 20));
-        graphics.drawString(string,getX()+30, getY()+30);             //pour faire apparaitre le texte plus ou moins au milieu
+        //graphics.drawString(string,getX()+20, getY()+30);             //pour faire apparaitre le texte plus ou moins au milieu
         if (contient(panneau.getSouris().x, panneau.getSouris().y)){
             graphics.setColor(Color.LIGHT_GRAY);
             graphics.fillRect(getX(),getY(),getWidth(),getHeight());
             graphics.setColor(Color.BLACK);
             graphics.setFont(new Font("Courier New", Font.BOLD, 20));
-            graphics.drawString(string,getX()+30, getY()+30);
+            //graphics.drawString(string,getX()+20, getY()+30);
         }
     }
     public boolean contient(int x, int y){
         return x >= getX() && x < getX() + getWidth() && y >= getY() && y < getY() + getHeight();
     }
+
 }
