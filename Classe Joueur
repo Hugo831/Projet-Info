@@ -2,10 +2,9 @@ package projet;
 
 import java.awt.*;
 
-public class Joueur implements Drawable{
-    private int Money;
-    private int Score = 100;
-
+public class Joueur{
+    public static int Money;
+    public static int Score;
 
     public Joueur(int money, int score){
         this.Money = money;
@@ -13,6 +12,7 @@ public class Joueur implements Drawable{
     }
 
     public void draw(Graphics graphics){
+        update_joueur();
         graphics.setColor(Color.LIGHT_GRAY);
         graphics.fillRect(50, 475, 150,80);
         graphics.setColor(Color.BLACK);
@@ -21,6 +21,25 @@ public class Joueur implements Drawable{
         graphics.drawString("Argent Joueur: "+ Money, 60, 540);
 
     }
+    public int getMoney(){
+        return Money;
+    }
+    public int getScore(){
+        return Score;
+    }
+    public void setMoney(int newMoney){
+        this.Money = newMoney;
+    }
+    public void setScore(int newScore){
+        this.Score = newScore;
+    }
+
+    public void update_joueur(){
+
+        getScore();
+        getMoney();
+    }
+
 
 
 
