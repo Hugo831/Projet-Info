@@ -1,9 +1,11 @@
 package projet;
 
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 
 public class Vague {
+    private int numero_vague = 1;
     private int vitessePnj;
     private int nombrePnj;
     private int tempsApparition;
@@ -12,7 +14,14 @@ public class Vague {
     private int compteurapp = 0;
     private ArrayList<PNJ> pnjList;
     private Plateau_Jeu plateau;
-    public Vague(int x, int y, int vitesse, int nombre, int tempsApp, int vie, Plateau_Jeu plateau){
+    private Joueur joueur;
+    private int kills = 0;
+    private int temps_entre_vague = 2500;
+    private int temps = 0;
+    public static boolean hasChanged = false;
+    private Panneau panneau;
+    private int maxvagues = 5;
+    public Vague(int x, int y, int vitesse, int nombre, int tempsApp, int vie, Plateau_Jeu plateau, Joueur joueur, int numero_vague, Panneau panneau){
         pnjList = new ArrayList<>();
         this.x  =x;
         this.y = y;
@@ -21,12 +30,16 @@ public class Vague {
         this.tempsApparition = tempsApp;
         this.viePnj = vie;
         this.plateau = plateau;
+        this.joueur = joueur;
+        this.numero_vague = numero_vague;
+        this.panneau = panneau;
     }
 
     public void update(Graphics graphics){
         if (pnjList.size()<=nombrePnj-1 && compteurapp >= tempsApparition){
-            pnjList.add(new PNJ(x,y,50,viePnj, plateau, -2, 2));
+            pnjList.add(new PNJ(x,y,50,viePnj, plateau, -2, 2, 1));
             compteurapp = 0;
+
         }
         else{
             compteurapp += 1;
@@ -34,17 +47,76 @@ public class Vague {
         for (int i=0; i<pnjList.size();++i){
             pnjList.get(i).se_deplacer();
             pnjList.get(i).draw(graphics);
+            pnjList.get(i).loose_Score(joueur);
             pnjList.get(i).delete();
-            pnjList.get(i).looseScore();
+            mort_pnj(pnjList.get(i));
 
         }
 
+        Ecran_entre_vague(graphics);
+        DeadWave();
 
+    }
+    public ArrayList<PNJ> getlist_PNJ(){
+        return pnjList;
     }
     public int getVitessePnj(){
 
         return vitessePnj;
     }
-
+    public void mort_pnj(PNJ pnj){
+        if (viePnj <= 0){
+            pnj.delete();
+        }
+    }
+    public void DeadWave(){
+        if (temps > temps_entre_vague){
+            if (kills == nombrePnj && !hasChanged) {
+                /*numero_vague += 1;
+                nombrePnj *= 2;
+                viePnj *= 2;
+                tempsApparition *= 2;*/
+                hasChanged = true;
+                plateau.init_plateau();
+                panneau.init_panneau();
+                kills = 0;
+            }
+            temps = 0;
+        }
+        else{
+            temps += 1;
+        }
+    }
+    public void Ecran_entre_vague(Graphics graphics){
+        if (kills == nombrePnj){
+            if (temps <= temps_entre_vague) {
+                graphics.clearRect(40, 20, plateau.getWidth(), plateau.getHeight());
+                graphics.setColor(Color.LIGHT_GRAY);
+                graphics.fillRect(40, 20, plateau.getWidth(), plateau.getHeight());
+                graphics.setColor(Color.BLACK);
+                graphics.setFont(new Font("New Courrier", Font.BOLD, 40));
+                graphics.drawString("Vague suivante...", plateau.getWidth() / 2 - 100, plateau.getHeight() / 2 + 40);
+                temps += 1;
+            }
+        }
+    }
+    public int getKills(){
+        return kills;
+    }
+    public void setKills(int kills){
+        this.kills = kills;
+    }
+    public boolean isHasChanged(){
+        return hasChanged;
+    }
+    public void setHasChanged(boolean b){
+        hasChanged = b;
+    }
+    public int getNumero_vague(){
+        return numero_vague;
+    }
+    public void setNumero_vague(int i){
+        this.numero_vague = i;
+    }
 
 }
