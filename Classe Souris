@@ -12,9 +12,13 @@ public class Souris extends Point implements MouseMotionListener, MouseListener 
     private Bouton bouton;
     private Panneau panneau;
     private Fenetre fenetre;
-    public Souris(Panneau panneau, Fenetre fenetre){
+    private Tourelle tour;
+    public boolean deposeTour = false;
+    public Souris(Panneau panneau, Fenetre fenetre, Tourelle tour){
         this.panneau = panneau;
         this.fenetre = fenetre;
+        this.tour = tour;
+
     }
 
 
@@ -23,11 +27,13 @@ public class Souris extends Point implements MouseMotionListener, MouseListener 
     }
 
     public void mousePressed(MouseEvent mouseEvent) {
-
+        //tour.drag();
+        panneau.click(1);
     }
 
     public void mouseReleased(MouseEvent mouseEvent) {
-
+        panneau.click(0);
+        //this.deposeTour = true;
     }
 
     public void mouseEntered(MouseEvent mouseEvent) {
@@ -39,11 +45,17 @@ public class Souris extends Point implements MouseMotionListener, MouseListener 
     }
 
     public void mouseDragged(MouseEvent mouseEvent) {
-
+        setLocation(mouseEvent.getX(),mouseEvent.getY());
+        move(mouseEvent.getX(),mouseEvent.getY());
+        this.deposeTour = true;
     }
 
     public void mouseMoved(MouseEvent mouseEvent) {
         setLocation(mouseEvent.getX(),mouseEvent.getY());
         move(mouseEvent.getX(),mouseEvent.getY());
+    }
+    public boolean getDepose(){
+        return deposeTour;
+
     }
 }
