@@ -14,11 +14,11 @@ public class Joueur{
     public void draw(Graphics graphics){
         update_joueur();
         graphics.setColor(Color.LIGHT_GRAY);
-        graphics.fillRect(50, 475, 150,80);
+        graphics.fillRect(50, 475, 160,80);
         graphics.setColor(Color.BLACK);
         graphics.setFont(new Font("Courier New", Font.BOLD, 14));
         graphics.drawString("Score Joueur: "+Score, 60, 500);
-        graphics.drawString("Argent Joueur: "+ Money, 60, 540);
+        graphics.drawString("Argent Joueur: "+ Money + "$", 60, 540);
 
     }
     public int getMoney(){
