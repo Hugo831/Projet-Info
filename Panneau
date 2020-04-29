@@ -2,7 +2,9 @@ package projet;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.io.*;
+import java.util.ArrayList;
 
 public class Panneau extends JPanel implements Runnable {               // runnable est une interface qui permet de faire une boucle infinie
     private Plateau_Jeu plateau;
@@ -10,44 +12,58 @@ public class Panneau extends JPanel implements Runnable {               // runna
     private int Width;
     private int Height;
     private Bouton[] boutons = new Bouton[5];
-    private Tourelle[] tours = new Tourelle[5];
+    private ArrayList<Tourelle> tours_bouton;
+    private ArrayList<Tourelle> tours_InGame;
     private int buttonwidth = 60;
     private int buttonHeight = 50;
     private Joueur joueur;
     private Vague vague;
     private Tourelle tourelle;
+    private int clicTour = -1;
+    private Fenetre fenetre;
+
 
     public Panneau(int width, int height, Fenetre fenetre){
         souris = new Souris(this, fenetre, tourelle);
         this.Width = width;
         this.Height = height;
+        this.fenetre = fenetre;
         addMouseListener(souris);                 // le parametre est le composant que l'on doit ecouter et Souris a le comportement de Mouse Listener et MouseMotionListener
         addMouseMotionListener(souris);
-        plateau = new Plateau_Jeu();
-        //bouton = new Bouton("Start", 120,50,275,this.getHeight() - 50, this, fenetre);
         joueur = new Joueur(10,100);
+        plateau = new Plateau_Jeu(joueur, 1, this);
+        tours_bouton = new ArrayList<>();
+        tours_InGame = new ArrayList<>();
+
         for (int i = 0 ; i < boutons.length ; i++){
             boutons[i] = new Bouton("ok", 60, 60, this.getWidth() - 400 + i*(buttonwidth+5), this.getHeight()-50, this, fenetre);
-            tours[i] = new Tourelle(this.getWidth() - 400 + i*(buttonwidth+5), this.getHeight()-50, 50, -1, 0, this, fenetre);
         }
     }
 
-    public Tourelle[] getTours(){
-        return tours;
-    }
-    public Tourelle getTourelle(int x){
-        return tours[x/tours[0].getCote()];
-    }
     public void paintComponent(Graphics graphics) {
         graphics.clearRect(0,0, getWidth(),getHeight());
         plateau.affichage_grille(graphics);
         plateau.affichage_arrivee(graphics);
         for (int i = 0 ; i < boutons.length ; i++) {
             boutons[i].draw(graphics);
-            tours[i].draw(graphics);
         }
+        creation_tour();
+        updateTour(graphics);
+
         joueur.draw(graphics);
         plateau.updateVague(graphics);
+
+        if(clicTour != -1){
+            tours_bouton.get(clicTour).setX(this.getSouris().x);
+            tours_bouton.get(clicTour).setY(this.getSouris().y);
+            tours_bouton.get(clicTour).dessin_zoneTir(graphics);
+        }
+        for (int i = 0 ; i < tours_InGame.size() ; i++){
+            plateau.destruction(tours_InGame.get(i), graphics);
+        }
+
+
+
 
 
     }
@@ -56,7 +72,7 @@ public class Panneau extends JPanel implements Runnable {               // runna
         while (true){
             repaint();
             try{
-                Thread.sleep(2);
+                Thread.sleep(10);
             }
             catch(Exception e){
 
@@ -77,5 +93,63 @@ public class Panneau extends JPanel implements Runnable {               // runna
     public void setSouris(int x, int y){
         this.souris.setLocation(x,y);
         this.souris.move(x,y);
+    }
+    public void click(int mouseButton){
+        if (mouseButton == 1){
+            if(clicTour == -1 && joueur.getMoney() > 0) {
+                for (int i = 0; i < boutons.length; i++) {
+                    if (boutons[i].contient(this.getSouris().x, this.getSouris().y)) {
+                        clicTour = i;
+                        boutons[i].setEmpty(true);
+                        joueur.setMoney(joueur.getMoney()-1);
+                    }
+                }
+            }
+        }
+        else if(mouseButton == 0) {
+            try{
+                if (plateau.getCarre(this.getSouris().x, this.getSouris().y) instanceof Sable && this.getSouris().x <= plateau.getWidth() && this.getSouris().y <= plateau.getHeight()){
+                    tours_bouton.get(clicTour).setHasMoved(true);
+                    tours_InGame.add(tours_bouton.get(clicTour));
+                    tours_bouton.remove(clicTour);
+                    clicTour = -1;
+
+                }
+            }
+            catch (Exception e){}
+
+        }
+
+    }
+    public void updateTour(Graphics graphics){
+        for (int i = 0 ; i < tours_bouton.size() ; i++){
+            tours_bouton.get(i).draw(graphics);
+        }
+        for (int j = 0 ; j < tours_InGame.size() ; j++){
+            tours_InGame.get(j).draw(graphics);
+        }
+
+    }
+    public void creation_tour(){
+
+        for (int i = 0 ; i < boutons.length ; i++){
+            if (boutons[i].isEmpty()){
+                tours_bouton.add(new Tourelle(boutons[i].getX(), boutons[i].getY(), 50, -1, 0, 150, 1, 1, 1));
+                boutons[i].setEmpty(false);
+            }
+        }
+    }
+    public void init_tour(){
+        if (Vague.hasChanged){
+            for (int i = 0 ; i < tours_InGame.size() ; i++){
+                tours_InGame.remove(i);
+            }
+            Vague.hasChanged = false;
+        }
+    }
+    public void init_panneau(){
+        if (Vague.hasChanged){
+            Panneau panneau = new Panneau(650, 550, fenetre);
+        }
     }
 }
