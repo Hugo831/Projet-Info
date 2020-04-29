@@ -15,19 +15,39 @@ public class Plateau_Jeu {                           //on va creer le plateau de
     private Carre[][] tableau;                       // creation d'un plateau double entree pour creer la grille, liste de carres
     private ArrayList<PNJ> vague_pnj;
     private Vague currentWave = null;
+    private boolean isSable = true;
+    private Joueur joueur;
+    private int pnj_touche = -1;
+    private boolean shoting = false;
+    private int level;
+    private Panneau panneau;
+    private int numero_vague = 1;
+    private int maxVagues = 5;
+    private int vagueactu;
 
-    public Plateau_Jeu() {
+    public Plateau_Jeu(Joueur joueur, int level, Panneau panneau) {
         tableau = new Carre[nbCarreY][nbCarreX];      // on cree le tableau vide avec le bon nbre de cases
-        creation_grille(new File("C:\\Users\\jacqu\\Documents\\BA2\\Informatique\\MAP1ground.txt"));
-        creation_arrivee(new File("C:\\Users\\jacqu\\Documents\\BA2\\Informatique\\MAP1air.txt"));
+        this.joueur = joueur;
+        this.level = level;
+        this.panneau = panneau;
+        creation_grille(new File("C:\\Users\\jacqu\\Documents\\BA2\\Informatique\\Projet\\MAP" + getlevel() +"ground.txt"));
+        creation_arrivee(new File("C:\\Users\\jacqu\\Documents\\BA2\\Informatique\\Projet\\MAP" + getlevel() + "air.txt"));
         creation_vague_pnj();
         vague_pnj = new ArrayList<>();
+        currentWave.DeadWave();
+    }
+    public int getlevel(){
+        return level;
+    }
+    public void setlevel(int l){
+        this.level = l;
     }
 
     public void creation_grille(File Map) {
         for (int y = 0; y < tableau.length; y++) {           //length d'un tableau renvoie sa hauteur
             for (int x = 0; x < tableau[0].length; x++) {
                 tableau[y][x] = new Sable(x * cote_carre + 40, y * cote_carre + 20, cote_carre, -2, 0);                  // dans chaque case du tableau on cree un nouveau carre
+
             }
         }
         try {
@@ -88,9 +108,14 @@ public class Plateau_Jeu {                           //on va creer le plateau de
 
     public void creation_vague_pnj() {
         int[] pos = getFirstPos();
-        currentWave = new Vague(pos[0], pos[1], 40, 10, 190, 5, this);
+        /*vagueactu = 1;
+        if (vagueactu < maxVagues && !Vague.hasChanged){
+            currentWave = new Vague(pos[0], pos[1], 40, 5, 190, 500, this, joueur, 1, panneau);
+            vagueactu +=1;
+            currentWave.setHasChanged(true);
+        }*/
+        currentWave = new Vague(pos[0], pos[1], 40, 8, 500, 500, this, joueur, 1, panneau);
     }
-
     public void updateVague (Graphics graphics){
         if (currentWave != null) {
             currentWave.update(graphics);
@@ -134,5 +159,53 @@ public class Plateau_Jeu {                           //on va creer le plateau de
     public int getHeight(){
         return nbCarreY * cote_carre;
     }
+    public boolean deposerTour(int x, int y){
+        if(getCarre(x,y) instanceof Chemin){
+            isSable = false;
+        }
+        return isSable;
+    }
+    public void destruction(Tourelle tourelle, Graphics graphics) {
+        int shot = 0;
+        for (int cible = 0; cible < currentWave.getlist_PNJ().size(); cible++) {
+            if (currentWave.getlist_PNJ().get(cible).getInGame()){
+                    if (tourelle.zoneTir().contains(currentWave.getlist_PNJ().get(cible).getX() + getCote_carre()/2, currentWave.getlist_PNJ().get(cible).getY() + getCote_carre()/2)  && shot < tourelle.get_nb_cibles()) {
+                        Tir_Projectile(graphics, tourelle, currentWave.getlist_PNJ().get(cible));
+                        currentWave.getlist_PNJ().get(cible).setPts_Vie(currentWave.getlist_PNJ().get(cible).getPts_Vie() - tourelle.getEfficacite_projectile());
+
+                        shot += 1;
+                    }
+                if (currentWave.getlist_PNJ().get(cible).getPts_Vie() <= 0){
+                    currentWave.setKills(currentWave.getKills() + 1);
+                    currentWave.getlist_PNJ().get(cible).setInGame(false);
+                    currentWave.getlist_PNJ().get(cible).DeadMoney(joueur);
+
+                    shot = 0;
+                }
+            }
+        }
+    }
+
+
+    public void Tir_Projectile(Graphics graphics, Tourelle tourelle, PNJ pnj){
+        graphics.setColor(Color.BLACK);
+        graphics.drawLine(tourelle.getX() + tourelle.getWidth()/2+30, tourelle.getY() + tourelle.getHeight()/2+20, pnj.getX()+pnj.getCote()/2, pnj.getY()+pnj.getCote()/2 );
+    }
+    public void init_plateau(){
+        int compteur = 0;
+        if (Vague.hasChanged){
+            int[] pos = getFirstPos();
+            currentWave = new Vague(pos[0], pos[1],40,10, 200, 500, this, joueur, getNumero_vague(), panneau);
+        }
+    }
+    public int getNumero_vague(){
+        return numero_vague;
+    }
+    public void setNumero_vague(){
+        this.numero_vague = numero_vague;
+    }
+
+
+
 
 }
