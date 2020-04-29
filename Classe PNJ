@@ -18,11 +18,13 @@ public class PNJ extends Carre implements Drawable {
     private boolean hasDownward = false;
     private boolean hasRight = false;
     private boolean hasLeft = false;
+    private int recompense;
 
-    public PNJ(int x, int y, int cote, int pts_Vie, Plateau_Jeu plateau, int airID, int groundID){
+    public PNJ(int x, int y, int cote, int pts_Vie, Plateau_Jeu plateau, int airID, int groundID, int recompense){
         super(x, y, cote, airID, groundID);
         this.Pts_Vie = pts_Vie;
         this.plateau = plateau;
+        this.recompense = recompense;
         depart_pnj();
     }
 
@@ -36,6 +38,11 @@ public class PNJ extends Carre implements Drawable {
             graphics.fillRect(getX(), getY(), getCote(), getCote());
             graphics.setColor(Color.BLACK);
             graphics.drawRect(getX(),getY(),getCote(),getCote());
+            graphics.drawRect(getX(), getY() - 10, getCote(), 6);
+            graphics.setColor(Color.GREEN);
+            graphics.fillRect(getX(), getY() - 10, getCote(), 6);
+            graphics.setColor(Color.RED);
+            graphics.fillRect(getX() + Pts_Vie/10, getY()-10, getCote() - Pts_Vie/10, 6);           // ne marche que pour 500 ptsvie
         }
 
     }
@@ -54,6 +61,9 @@ public class PNJ extends Carre implements Drawable {
     }
     public boolean getInGame(){
         return inGame;
+    }
+    public void setInGame(boolean b){
+        this.inGame = b;
     }
 
     private int compteur = 0;
@@ -137,14 +147,25 @@ public class PNJ extends Carre implements Drawable {
 
     }
     public void delete(){
-        if (getX() == plateau.getWidth())
+        if (getX() == plateau.getWidth()) {
             inGame = false;
 
-    }
-    public void looseScore(){
-        if (getX() == plateau.getWidth()) {
-            Joueur.Score -= 1;
         }
+
+    }
+    public void loose_Score(Joueur joueur){
+        if (getX() == plateau.getWidth() && inGame) {
+            joueur.setScore(joueur.getScore() - 1);
+        }
+    }
+    public int getPts_Vie(){
+        return Pts_Vie;
+    }
+    public void setPts_Vie(int pts_Vie){
+        this.Pts_Vie = pts_Vie;
+    }
+    public void DeadMoney(Joueur joueur){
+        joueur.setMoney(joueur.getMoney() + recompense);
     }
 
 }
