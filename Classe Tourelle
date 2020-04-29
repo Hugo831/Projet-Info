@@ -3,23 +3,29 @@ package projet;
 import projet.GameObjects;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class Tourelle extends Carre implements Drawable{
     public int Cout;
     public int Frequence_Tir;
     public int Portee_Tir;
     public int Efficacite_projectile;
+    public int nb_cibles;
     public int Niveau;
     public int dimensions;
-    public boolean clicTour = false;
     private Panneau panneau;
     private Fenetre fenetre;
+    private boolean isOnBouton = true;
+    private boolean hasMoved = false;
+    private boolean isReady = true;
 
-    public Tourelle(int x, int y, int cote, int airID, int groundID, Panneau panneau, Fenetre fenetre){
+    public Tourelle(int x, int y, int cote, int airID, int groundID, int portee_Tir, int frequence_Tir, int efficacite_projectile, int nb_cibles){
         super(x, y, cote, airID, groundID);
-        this.panneau = panneau;
-        this.fenetre = fenetre;
-
+        this.Portee_Tir = portee_Tir;
+        this.Frequence_Tir = frequence_Tir;
+        this.Efficacite_projectile = efficacite_projectile;
+        this.nb_cibles = nb_cibles;
+        zoneTir();
         /*this.Cout = Cout;
         this.Frequence_Tir = Frequence;
         this.Efficacite_projectile = Efficacite;
@@ -30,15 +36,12 @@ public class Tourelle extends Carre implements Drawable{
     public void draw(Graphics graphics) {
         graphics.setColor(Color.BLACK);
         graphics.fillRect(getX()+10, getY()+15, getCote()-10, getCote()-20);
+
         for (int i = 0 ; i < 2 ; i++){
             graphics.fillRect(getX()+10, getY()+5, getCote()-40, getCote()-40);
             graphics.fillRect(getX()+25, getY()+5, getCote()-40, getCote()-40);
             graphics.fillRect(getX()+40, getY()+5, getCote()-40, getCote()-40);
         }
-        if (clicTour){
-            graphics.fillRect(panneau.getSouris().x - getCote(), panneau.getSouris().y, getCote(), getCote());
-        }
-
     }
 
     public void Initialise_Freq(int Frequence_Tir, int Niveau){
@@ -51,18 +54,49 @@ public class Tourelle extends Carre implements Drawable{
         this.Efficacite_projectile = Efficacite * Niveau;
     }
     public void Ameliorer_Tour(){}
-    /*public void click(int mouseButton, Panneau panneau, Souris souris){
-        if (mouseButton == 1){
-            for (int i = 0 ; i < panneau.getTour().length ; i++){
-                if ()
-            }
-        }
-    }*/
+    public boolean isOnBouton(){
+        return isOnBouton;
+    }
+    public void setOnBouton(boolean b){
+        this.isOnBouton = b;
+    }
     public boolean contient(int x, int y){
-        return x >= getX() && x < getX() + getCote() && y >= getY() && y < getY() + getCote();
+        return x >= getX() && x < getX() + getWidth() && y >= getY() && y < getY() + getHeight();
+    }
+    public boolean getHasMoved(){
+        return hasMoved;
+    }
+    public void setHasMoved(boolean b){
+        this.hasMoved = b;
+    }
+    public void dessin_zoneTir(Graphics graphics){
+        graphics.setColor(Color.BLACK);
+        graphics.drawRect(getX()+10 + (getCote()-10)/2 - Portee_Tir/2, getY()+15+(getCote()-20)/2 - Portee_Tir/2, Portee_Tir, Portee_Tir);
+
+    }
+    public Rectangle zoneTir(){
+        Rectangle zone = new Rectangle(getX()+10 + (getCote()-10)/2 - Portee_Tir/2, getY()+15+(getCote()-20)/2 - Portee_Tir/2, Portee_Tir, Portee_Tir);
+        return zone;
+    }
+    public void Tir_projectile(Graphics graphics){
+
     }
 
-
+    public int getEfficacite_projectile(){
+        return Efficacite_projectile;
+    }
+    public int get_nb_cibles(){
+        return nb_cibles;
+    }
+    public void set_nb_cibles(int i){
+        this.nb_cibles = i;
+    }
+    public boolean getIsReady(){
+        return isReady;
+    }
+    public void setIsReady(boolean b){
+        this.isReady = b;
+    }
 
 
 
