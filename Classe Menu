@@ -40,6 +40,9 @@ public class Menu {
             e.printStackTrace();
         }
         graphics.drawImage(img, 40, 20, panneau.getWidth(), panneau.getHeight(), null);
+        graphics.setColor(Color.BLACK);
+        graphics.setFont(new Font("Courier New", Font.BOLD, 60));
+        graphics.drawString("TOWER DEFENSE", panneau.getWidth()/2 - 200, 100);
         for (int i = 0 ; i < boutonsMenu.length ; i++){
             boutonsMenu[i].draw(graphics);
             graphics.setColor(Color.BLACK);
