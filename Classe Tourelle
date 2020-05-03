@@ -4,56 +4,108 @@ import projet.GameObjects;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class Tourelle extends Carre implements Drawable{
-    public int Cout;
     public int Frequence_Tir;
     public int Portee_Tir;
     public int Efficacite_projectile;
     public int nb_cibles;
-    public int Niveau;
-    public int dimensions;
-    private Panneau panneau;
-    private Fenetre fenetre;
     private boolean isOnBouton = true;
     private boolean hasMoved = false;
     private boolean isReady = true;
+    private int cout=1;
+    private int niveau=1;
+    private Panneau panneau;
 
-    public Tourelle(int x, int y, int cote, int airID, int groundID, int portee_Tir, int frequence_Tir, int efficacite_projectile, int nb_cibles){
+    private int timer = 0;
+
+    public Tourelle(int x, int y, int cote, int airID, int groundID, int portee_Tir, int frequence_Tir, int efficacite_projectile, int nb_cibles, int niveau, int cout, Panneau panneau){
         super(x, y, cote, airID, groundID);
         this.Portee_Tir = portee_Tir;
         this.Frequence_Tir = frequence_Tir;
         this.Efficacite_projectile = efficacite_projectile;
         this.nb_cibles = nb_cibles;
+        this.niveau = niveau;
+        this.cout = cout;
+        this.panneau = panneau;
         zoneTir();
-        /*this.Cout = Cout;
-        this.Frequence_Tir = Frequence;
-        this.Efficacite_projectile = Efficacite;
-        this.Niveau = Niveau;*/
-
+        initCout();
+        timer = Frequence_Tir;
 
     }
     public void draw(Graphics graphics) {
-        graphics.setColor(Color.BLACK);
-        graphics.fillRect(getX()+10, getY()+15, getCote()-10, getCote()-20);
+        if (getAirID() == 1){
+            graphics.setColor(Color.BLACK);
+            if (this.getNiveau() == 2){
+                graphics.setColor(new Color(90, 30, 30));
+            }
+            else if (this.getNiveau() == 3){
+                graphics.setColor(new Color(200, 0, 0));
+            }
+            graphics.fillRect(getX()+10, getY()+15, getCote()-10, getCote()-20);
+            graphics.setColor(Color.WHITE);
+            graphics.drawString("x2", getX() + 23, getY() + 30);
 
-        for (int i = 0 ; i < 2 ; i++){
-            graphics.fillRect(getX()+10, getY()+5, getCote()-40, getCote()-40);
-            graphics.fillRect(getX()+25, getY()+5, getCote()-40, getCote()-40);
-            graphics.fillRect(getX()+40, getY()+5, getCote()-40, getCote()-40);
+            for (int i = 0 ; i < 2 ; i++){
+                graphics.setColor(Color.BLACK);
+                if (this.getNiveau() == 2){
+                    graphics.setColor(new Color(90, 30, 30));
+                }
+                else if (this.getNiveau() == 3){
+                    graphics.setColor(new Color(200, 0, 0));
+                }
+                graphics.fillRect(getX()+10, getY()+5, getCote()-40, getCote()-40);
+                graphics.fillRect(getX()+25, getY()+5, getCote()-40, getCote()-40);
+                graphics.fillRect(getX()+40, getY()+5, getCote()-40, getCote()-40);
+            }
         }
-    }
+        else if (getAirID() == 0){
+            graphics.setColor(Color.BLACK);
+            if (this.getNiveau() == 2){
+                graphics.setColor(new Color(90, 30, 30));
+            }
+            else if (this.getNiveau() == 3){
+                graphics.setColor(new Color(200, 0, 0));
+            }
+            graphics.fillRect(getX()+10, getY() + 15, getCote() - 10, 10);
+            graphics.fillOval(getX() + 35, getY() + 20, 15, 15 );
+        }
+        else if(getAirID() == -1){
+            graphics.setColor(Color.BLACK);
+            if (this.getNiveau() == 2){
+                graphics.setColor(new Color(90, 30, 30));
+            }
+            else if (this.getNiveau() == 3){
+                graphics.setColor(new Color(200, 0, 0));
+            }
+            graphics.fillRect(getX()+10, getY()+15, getCote()-10, getCote()-20);
 
-    public void Initialise_Freq(int Frequence_Tir, int Niveau){
-        this.Frequence_Tir = Frequence_Tir * Niveau;
+            for (int i = 0 ; i < 2 ; i++){
+                graphics.fillRect(getX()+10, getY()+5, getCote()-40, getCote()-40);
+                graphics.fillRect(getX()+25, getY()+5, getCote()-40, getCote()-40);
+                graphics.fillRect(getX()+40, getY()+5, getCote()-40, getCote()-40);
+            }
+        }
+
     }
-    public void Initialise_Portee(int Portee, int Niveau){
-        this.Portee_Tir = Portee * Niveau;
+    public void setEfficacite_projectile(int efficacite_projectile){
+        this.Efficacite_projectile = efficacite_projectile;
     }
-    public void Initialise_Efficacite(int Efficacite, int Niveau){
-        this.Efficacite_projectile = Efficacite * Niveau;
+    public void setPortee_Tir(int portee_Tir){
+        this.Portee_Tir = portee_Tir;
     }
-    public void Ameliorer_Tour(){}
+    public int getPortee_Tir(){
+        return Portee_Tir;
+    }
+    public void Ameliorer_Tour(){
+    }
+    public int getNiveau(){
+        return niveau;
+    }
+    public void setNiveau(int n){
+        this.niveau = n;
+    }
     public boolean isOnBouton(){
         return isOnBouton;
     }
@@ -61,7 +113,7 @@ public class Tourelle extends Carre implements Drawable{
         this.isOnBouton = b;
     }
     public boolean contient(int x, int y){
-        return x >= getX() && x < getX() + getWidth() && y >= getY() && y < getY() + getHeight();
+        return x >= getX() && x < getX() + getCote() && y >= getY() && y < getY() + getCote();
     }
     public boolean getHasMoved(){
         return hasMoved;
@@ -78,8 +130,18 @@ public class Tourelle extends Carre implements Drawable{
         Rectangle zone = new Rectangle(getX()+10 + (getCote()-10)/2 - Portee_Tir/2, getY()+15+(getCote()-20)/2 - Portee_Tir/2, Portee_Tir, Portee_Tir);
         return zone;
     }
-    public void Tir_projectile(Graphics graphics){
+    public Projectile[] update(ArrayList<PNJ> target){
+        timer++;
+        if(timer>=Frequence_Tir){
+            timer = 0;
+            Projectile res[] = new Projectile[target.size()];
 
+            for(int i=0;i<target.size();++i){
+                res[i] = new Projectile(getX()+getCote()/2, getY()+getCote()/2, 1, Efficacite_projectile, target.get(i));
+            }
+            return res;
+        }
+        return null;
     }
 
     public int getEfficacite_projectile(){
@@ -97,7 +159,29 @@ public class Tourelle extends Carre implements Drawable{
     public void setIsReady(boolean b){
         this.isReady = b;
     }
-
+    public void setFrequence_Tir(int frequence_Tir){
+        this.Frequence_Tir = frequence_Tir;
+    }
+    public int getFrequence_Tir(){
+        return Frequence_Tir;
+    }
+    public int getCout(){
+        return cout;
+    }
+    /*public void setCout(int cout){
+        this.cout = cout;
+    }*/
+    public void initCout(){
+        if (niveau == 1){
+            this.cout = getCout();
+        }
+        else if (niveau == 2){
+            this.cout = getCout() + niveau;
+        }
+        else if (niveau == 3){
+            this.cout = getCout() + niveau;
+        }
+    }
 
 
 }
