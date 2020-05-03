@@ -34,17 +34,16 @@ public class Panneau extends JPanel implements Runnable {               // runna
         addMouseListener(souris);                 // le parametre est le composant que l'on doit ecouter et Souris a le comportement de Mouse Listener et MouseMotionListener
         addMouseMotionListener(souris);
         menu = new Menu(this, fenetre, plateau);
-        if (State == GAME){
-            joueur = new Joueur(5,10);
-            plateau = new Plateau_Jeu(joueur, 1, this);
+        joueur = new Joueur(5,10);
+        plateau = new Plateau_Jeu(joueur, 1, this);
 
-            tours_bouton = new ArrayList<>();
-            tours_InGame = new ArrayList<>();
+        tours_bouton = new ArrayList<>();
+        tours_InGame = new ArrayList<>();
 
-            for (int i = 0 ; i < boutons.length ; i++){
-                boutons[i] = new Bouton("ok", 60, 60, this.getWidth() - 400 + i*(buttonwidth+5), this.getHeight()-50, this, fenetre);
-            }
+        for (int i = 0 ; i < boutons.length ; i++){
+            boutons[i] = new Bouton("ok", 60, 60, this.getWidth() - 400 + i*(buttonwidth+5), this.getHeight()-50, this, fenetre);
         }
+        
 
     }
 
