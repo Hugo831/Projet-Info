@@ -1,16 +1,42 @@
-public class Projectile extends GameObjects{
+package projet;
+
+import projet.GameObjects;
+
+import java.awt.*;
+
+public class Projectile{
     public int Degats;
-    public int Niveau;
+    private int rayon=15;
+    private PNJ target;
+    int posX, posY;
 
-    public Projectile(int x, int y, int Vitesse, int Degats, int Niveau){
-        super(x,y,Vitesse);
-        this.Degats = Degats;
-        this.Niveau = Niveau;
-    }
-    public void Initialise_Degats(int Degats, int Niveau){
-        this.Degats = Degats * Niveau;
+    public Projectile(int posX, int posY, int vitesse, int degat, PNJ target){
+        this.posX = posX;
+        this.posY = posY;
+        this.target = target;
+        this.Degats = degat;
     }
 
+    public void draw(Graphics graphics){
+        graphics.setColor(Color.RED);
+        graphics.fillOval(posX,posY,rayon,rayon);
+    }
+
+    public boolean update(){
+        double distX = posX+rayon-target.getCentralX();
+        double distY = posY+rayon-target.getCentralY();
+        double dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+
+        posX -= 4*distX/dist;
+        posY -= 4*distY/dist;
+
+
+        if(target.contains(posX+rayon, posY+rayon)){
+            target.setPts_Vie(target.getPts_Vie() - Degats);
+            return true;
+        }
+        return false;
+    }
 
 
 
