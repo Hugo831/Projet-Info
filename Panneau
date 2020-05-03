@@ -6,6 +6,8 @@ import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.ArrayList;
 
+import static projet.Panneau.STATE.GAME;
+
 public class Panneau extends JPanel implements Runnable {               // runnable est une interface qui permet de faire une boucle infinie
     private Plateau_Jeu plateau;
     private Souris souris;
@@ -21,6 +23,7 @@ public class Panneau extends JPanel implements Runnable {               // runna
     private Tourelle tourelle;
     private int clicTour = -1;
     private Fenetre fenetre;
+    private Menu menu;
 
 
     public Panneau(int width, int height, Fenetre fenetre){
@@ -30,41 +33,48 @@ public class Panneau extends JPanel implements Runnable {               // runna
         this.fenetre = fenetre;
         addMouseListener(souris);                 // le parametre est le composant que l'on doit ecouter et Souris a le comportement de Mouse Listener et MouseMotionListener
         addMouseMotionListener(souris);
-        joueur = new Joueur(10,100);
-        plateau = new Plateau_Jeu(joueur, 1, this);
-        tours_bouton = new ArrayList<>();
-        tours_InGame = new ArrayList<>();
+        menu = new Menu(this, fenetre, plateau);
+        if (State == GAME){
+            joueur = new Joueur(5,10);
+            plateau = new Plateau_Jeu(joueur, 1, this);
 
-        for (int i = 0 ; i < boutons.length ; i++){
-            boutons[i] = new Bouton("ok", 60, 60, this.getWidth() - 400 + i*(buttonwidth+5), this.getHeight()-50, this, fenetre);
+            tours_bouton = new ArrayList<>();
+            tours_InGame = new ArrayList<>();
+
+            for (int i = 0 ; i < boutons.length ; i++){
+                boutons[i] = new Bouton("ok", 60, 60, this.getWidth() - 400 + i*(buttonwidth+5), this.getHeight()-50, this, fenetre);
+            }
         }
+
     }
 
     public void paintComponent(Graphics graphics) {
-        graphics.clearRect(0,0, getWidth(),getHeight());
-        plateau.affichage_grille(graphics);
-        plateau.affichage_arrivee(graphics);
-        for (int i = 0 ; i < boutons.length ; i++) {
-            boutons[i].draw(graphics);
+        if (State == STATE.MENU){
+            menu.draw(graphics);
         }
-        creation_tour();
-        updateTour(graphics);
+        else if (State == STATE.GAME){
+            graphics.clearRect(0,0, getWidth(),getHeight());
+            plateau.affichage_grille(graphics);
+            plateau.affichage_arrivee(graphics);
+            for (int i = 0 ; i < boutons.length ; i++) {
+                boutons[i].draw(graphics);
+            }
+            creation_tour();
+            updateTour(graphics);
 
-        joueur.draw(graphics);
-        plateau.updateVague(graphics);
+            joueur.draw(graphics);
+            plateau.updateVague(graphics);
 
-        if(clicTour != -1){
-            tours_bouton.get(clicTour).setX(this.getSouris().x);
-            tours_bouton.get(clicTour).setY(this.getSouris().y);
-            tours_bouton.get(clicTour).dessin_zoneTir(graphics);
+            if(clicTour != -1){
+                tours_bouton.get(clicTour).setX(this.getSouris().x);
+                tours_bouton.get(clicTour).setY(this.getSouris().y);
+                tours_bouton.get(clicTour).dessin_zoneTir(graphics);
+            }
+            for (int i = 0 ; i < tours_InGame.size() ; i++){
+                plateau.destruction(tours_InGame.get(i), graphics);
+            }
+            ecranFinDeJeu(graphics);
         }
-        for (int i = 0 ; i < tours_InGame.size() ; i++){
-            plateau.destruction(tours_InGame.get(i), graphics);
-        }
-
-
-
-
 
     }
 
@@ -78,9 +88,14 @@ public class Panneau extends JPanel implements Runnable {               // runna
 
             }
         }
-
-
     }
+    public enum STATE{
+        MENU,
+        GAME
+    }
+
+    private STATE State = STATE.MENU;
+
     public int getWidth(){
         return Width;
     }
@@ -95,29 +110,66 @@ public class Panneau extends JPanel implements Runnable {               // runna
         this.souris.move(x,y);
     }
     public void click(int mouseButton){
-        if (mouseButton == 1){
-            if(clicTour == -1 && joueur.getMoney() > 0) {
-                for (int i = 0; i < boutons.length; i++) {
-                    if (boutons[i].contient(this.getSouris().x, this.getSouris().y)) {
-                        clicTour = i;
-                        boutons[i].setEmpty(true);
-                        joueur.setMoney(joueur.getMoney()-1);
+        if (State == GAME){
+            if (mouseButton == 1){
+                if(clicTour == -1) {
+                    for (int i = 0; i < boutons.length; i++) {
+                        if (boutons[i].contient(this.getSouris().x, this.getSouris().y) && joueur.getMoney() >= tours_bouton.get(i).getCout()) {
+                            clicTour = i;
+                            boutons[i].setEmpty(true);
+                            joueur.setMoney(joueur.getMoney() - tours_bouton.get(clicTour).getCout());
+                        }
+                    }
+                    for (int j = 0 ; j < tours_InGame.size() ; j++){
+                        if (tours_InGame.get(j).contains(this.getSouris().x, this.getSouris().y) && joueur.getMoney() >= (tours_InGame.get(j).getCout() - 1) && tours_InGame.get(j).getNiveau() < 3) {
+                            tours_InGame.get(j).setNiveau(tours_InGame.get(j).getNiveau() + 1);
+                            if (tours_InGame.get(j).getAirID() == -1 && tours_InGame.get(j).getNiveau() <= 3){
+                                joueur.setMoney(joueur.getMoney() - (tours_InGame.get(j).getCout() -1));
+                                tours_InGame.get(j).setEfficacite_projectile(tours_InGame.get(j).getEfficacite_projectile() * tours_InGame.get(j).getNiveau());
+                            }
+                            else if (tours_InGame.get(j).getAirID() == 0 && tours_InGame.get(j).getNiveau() <= 3){
+                                joueur.setMoney(joueur.getMoney() - (tours_InGame.get(j).getCout() - 1));
+                                tours_InGame.get(j).setFrequence_Tir(tours_InGame.get(j).getFrequence_Tir() - 20 * tours_InGame.get(j).getNiveau());
+                            }
+                            else if (tours_InGame.get(j).getAirID() == 1 && tours_InGame.get(j).getNiveau() <= 3){
+                                joueur.setMoney(joueur.getMoney() - (tours_InGame.get(j).getCout() - 1));
+                                tours_InGame.get(j).setPortee_Tir(tours_InGame.get(j).getPortee_Tir() + 10 * tours_InGame.get(j).getNiveau());
+                            }
+                        }
                     }
                 }
             }
-        }
-        else if(mouseButton == 0) {
-            try{
-                if (plateau.getCarre(this.getSouris().x, this.getSouris().y) instanceof Sable && this.getSouris().x <= plateau.getWidth() && this.getSouris().y <= plateau.getHeight()){
+            else if(mouseButton == 0) {
+                if (clicTour != -1 && plateau.getCarre(this.getSouris().x, this.getSouris().y) instanceof Sable && this.getSouris().x <= plateau.getWidth() && this.getSouris().y <= plateau.getHeight()){
                     tours_bouton.get(clicTour).setHasMoved(true);
                     tours_InGame.add(tours_bouton.get(clicTour));
                     tours_bouton.remove(clicTour);
                     clicTour = -1;
-
                 }
             }
-            catch (Exception e){}
+        }
+        else if (State == STATE.MENU){
+            if (mouseButton == 1){
+                for (int b = 0 ; b < menu.getBoutonsMenu().length ; b++){
+                    System.out.println(menu.getBoutonsMenu()[b].getX() + " " + menu.getBoutonsMenu()[b].getY());
+                    if (menu.getBoutonsMenu()[b].contient(this.getSouris().x, this.getSouris().y)){
+                        if (b == 0){
+                            System.out.println("ok");
 
+                            State = GAME;
+                            //plateau.setlevel(1);
+                        }
+                        else if (b == 1){
+
+                            State = GAME;
+                            //plateau.setlevel(2);
+                        }
+                        else if (b == 2){
+                            fenetre.getDefaultCloseOperation();
+                        }
+                    }
+                }
+            }
         }
 
     }
@@ -128,28 +180,47 @@ public class Panneau extends JPanel implements Runnable {               // runna
         for (int j = 0 ; j < tours_InGame.size() ; j++){
             tours_InGame.get(j).draw(graphics);
         }
-
+        for (int b = 0 ; b < boutons.length ; b++){
+            graphics.setColor(Color.BLACK);
+            graphics.setFont(new Font("Courier New", Font.BOLD, 14));
+            for (int t = 0 ; t < tours_bouton.size() ; t++){
+                if (b <= 2){
+                    graphics.drawString("2$" , boutons[b].getX() + 20, boutons[b].getY() - 10);
+                }
+                if (b == 3){
+                    graphics.drawString( "5$", boutons[b].getX() + 20, boutons[b].getY() - 10);
+                }
+                if (b == 4){
+                    graphics.drawString( "3$", boutons[b].getX() + 20, boutons[b].getY() - 10);
+                }
+            }
+        }
     }
     public void creation_tour(){
-
         for (int i = 0 ; i < boutons.length ; i++){
             if (boutons[i].isEmpty()){
-                tours_bouton.add(new Tourelle(boutons[i].getX(), boutons[i].getY(), 50, -1, 0, 150, 1, 1, 1));
+                if (i <= 2){
+                    tours_bouton.add(i,new Tourelle(boutons[i].getX(), boutons[i].getY(), 50, -1, 0, 200, 60 , 10 , 1, 1, 2, this));
+                }
+                if (i == 3){
+                    tours_bouton.add(i,new Tourelle(boutons[i].getX(), boutons[i].getY(), 50, 0, 0, 300, 300 , 250, 1, 1, 5, this));
+                }
+                if (i == 4){
+                    tours_bouton.add(i,new Tourelle(boutons[i].getX(), boutons[i].getY(), 50, 1, 0, 200, 60, 10, 2, 1, 3, this));
+                }
                 boutons[i].setEmpty(false);
             }
         }
     }
-    public void init_tour(){
-        if (Vague.hasChanged){
-            for (int i = 0 ; i < tours_InGame.size() ; i++){
-                tours_InGame.remove(i);
-            }
-            Vague.hasChanged = false;
+    public void ecranFinDeJeu(Graphics graphics){
+        if (joueur.getScore() <= 0){
+            graphics.clearRect(0, 0, this.getWidth(), this.getHeight());
+            graphics.setColor(Color.LIGHT_GRAY);
+            graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
+            graphics.setColor(Color.BLACK);
+            graphics.setFont(new Font("New courier", Font.BOLD, 30));
+            graphics.drawString("La partie est terminée... Vous avez perdu", 10, this.getHeight()/2 + 25);
         }
     }
-    public void init_panneau(){
-        if (Vague.hasChanged){
-            Panneau panneau = new Panneau(650, 550, fenetre);
-        }
-    }
+
 }
