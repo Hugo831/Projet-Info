@@ -1,0 +1,79 @@
+package projet;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+
+public class Menu {
+
+    private Panneau panneau;
+    private Fenetre fenetre;
+    private Bouton[] boutonsMenu = new Bouton[3];
+    private Plateau_Jeu plateau;
+
+    public Menu(Panneau panneau, Fenetre fenetre, Plateau_Jeu plateau){
+        this.panneau = panneau;
+        this.fenetre = fenetre;
+        this.plateau = plateau;
+        for (int i = 0 ; i < boutonsMenu.length ; i++){
+            if (i == 0){
+                boutonsMenu[i] = new Bouton("Jouer : Niveau 1", 150, 60, panneau.getWidth() - 370, panneau.getHeight()/2 - 100 + i * 110, panneau, fenetre);
+            }
+            else if (i == 1){
+                boutonsMenu[i] = new Bouton("Jouer : Niveau 2", 150, 60, panneau.getWidth() - 370, panneau.getHeight()/2 - 100 + i * 110, panneau, fenetre);
+            }
+            else if (i == 2){
+                boutonsMenu[i] = new Bouton("Règles du jeu", 150, 60, panneau.getWidth() - 370, panneau.getHeight()/2 - 100 + i * 110, panneau, fenetre);
+            }
+
+        }
+
+    }
+
+    public void draw(Graphics graphics){
+        Image img = null;
+        try {
+            img = ImageIO.read(new File("C:\\Users\\jacqu\\IdeaProjects\\PROJET INFO\\CODE PROJET INFO\\src\\maps\\background.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        graphics.drawImage(img, 40, 20, panneau.getWidth(), panneau.getHeight(), null);
+        for (int i = 0 ; i < boutonsMenu.length ; i++){
+            boutonsMenu[i].draw(graphics);
+            graphics.setColor(Color.BLACK);
+            graphics.setFont(new Font("Courier New", Font.BOLD, 15));
+            if (i == 0){
+                graphics.drawString("Jouer: Niveau 1", boutonsMenu[i].getX() + 5, boutonsMenu[i].getY() + 30);
+            }
+            else if (i == 1){
+                graphics.drawString("Jouer: Niveau 2", boutonsMenu[i].getX() + 5, boutonsMenu[i].getY() + 30);
+            }
+            else if (i == 2){
+                graphics.drawString("Quitter", boutonsMenu[i].getX() + 40, boutonsMenu[i].getY() + 30);
+            }
+        }
+
+    }
+    public void chooseButton(int mouseButton){
+        for (int i = 0 ; i < boutonsMenu.length ; i++){
+            if (boutonsMenu[i].contains(panneau.getSouris().x, panneau.getSouris().y)){
+                if (i == 0){
+                    plateau.setlevel(1);
+                }
+                else if (i == 1){
+                    plateau.setlevel(2);
+                }
+                else if (i == 2){
+
+                }
+            }
+        }
+    }
+    public Bouton[] getBoutonsMenu(){
+        return boutonsMenu;
+    }
+
+
+}
