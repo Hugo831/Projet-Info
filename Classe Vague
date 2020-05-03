@@ -16,8 +16,7 @@ public class Vague {
     private Plateau_Jeu plateau;
     private Joueur joueur;
     private int kills = 0;
-    private int temps_entre_vague = 2500;
-    private int temps = 0;
+
     public static boolean hasChanged = false;
     private Panneau panneau;
     private int maxvagues = 5;
@@ -37,7 +36,7 @@ public class Vague {
 
     public void update(Graphics graphics){
         if (pnjList.size()<=nombrePnj-1 && compteurapp >= tempsApparition){
-            pnjList.add(new PNJ(x,y,50,viePnj, plateau, -2, 2, 1));
+            pnjList.add(new PNJ(x,y,50,viePnj, plateau, -2, 2, 1,this));
             compteurapp = 0;
 
         }
@@ -52,10 +51,6 @@ public class Vague {
             mort_pnj(pnjList.get(i));
 
         }
-
-        Ecran_entre_vague(graphics);
-        DeadWave();
-
     }
     public ArrayList<PNJ> getlist_PNJ(){
         return pnjList;
@@ -66,40 +61,28 @@ public class Vague {
     }
     public void mort_pnj(PNJ pnj){
         if (viePnj <= 0){
+            kills += 1;
             pnj.delete();
         }
     }
-    public void DeadWave(){
+    /*public void DeadWave(){
         if (temps > temps_entre_vague){
             if (kills == nombrePnj && !hasChanged) {
                 /*numero_vague += 1;
                 nombrePnj *= 2;
                 viePnj *= 2;
-                tempsApparition *= 2;*/
+                tempsApparition *= 2;*//*
                 hasChanged = true;
-                plateau.init_plateau();
-                panneau.init_panneau();
                 kills = 0;
+
             }
             temps = 0;
         }
         else{
             temps += 1;
         }
-    }
-    public void Ecran_entre_vague(Graphics graphics){
-        if (kills == nombrePnj){
-            if (temps <= temps_entre_vague) {
-                graphics.clearRect(40, 20, plateau.getWidth(), plateau.getHeight());
-                graphics.setColor(Color.LIGHT_GRAY);
-                graphics.fillRect(40, 20, plateau.getWidth(), plateau.getHeight());
-                graphics.setColor(Color.BLACK);
-                graphics.setFont(new Font("New Courrier", Font.BOLD, 40));
-                graphics.drawString("Vague suivante...", plateau.getWidth() / 2 - 100, plateau.getHeight() / 2 + 40);
-                temps += 1;
-            }
-        }
-    }
+    }*/
+
     public int getKills(){
         return kills;
     }
@@ -117,6 +100,15 @@ public class Vague {
     }
     public void setNumero_vague(int i){
         this.numero_vague = i;
+    }
+    public int getNombrePnj(){
+        return nombrePnj;
+    }
+    public void setNombrePnj(int nb){
+        this.nombrePnj = nb;
+    }
+    public boolean finishWave(){
+        return kills >= nombrePnj;
     }
 
 }
