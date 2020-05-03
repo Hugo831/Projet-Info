@@ -153,18 +153,15 @@ public class Panneau extends JPanel implements Runnable {               // runna
                     System.out.println(menu.getBoutonsMenu()[b].getX() + " " + menu.getBoutonsMenu()[b].getY());
                     if (menu.getBoutonsMenu()[b].contient(this.getSouris().x, this.getSouris().y)){
                         if (b == 0){
-                            System.out.println("ok");
-
-                            State = GAME;
+                             State = GAME;
                             //plateau.setlevel(1);
                         }
                         else if (b == 1){
-
                             State = GAME;
                             //plateau.setlevel(2);
                         }
                         else if (b == 2){
-                            fenetre.getDefaultCloseOperation();
+                            System.exit(1);
                         }
                     }
                 }
